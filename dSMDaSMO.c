@@ -21,7 +21,7 @@ void dSMDaSMO(float* secmbrO, int* AdPrCoefLiO, float* MatriceO, int* NumColO, c
 
 
   LecSMD(&NbLign1, &NbCoef1, &secmbr1, &nuddir1, &valdir1,
-	     &AdPrCoefLi1, &Matrice1, &NumCol1, &AdSuccLi1,"SMD_bin.txt");
+	     &AdPrCoefLi1, &Matrice1, &NumCol1, &AdSuccLi1,nomfich);
 
 
   /*** Passage du stockage SMD a SMO ***/
