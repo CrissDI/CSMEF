@@ -4,7 +4,7 @@
 #include "assmb.h"
 
 
-void dSMDaSMO(float* secmbrO, int* AdPrCoefLiO, float* MatriceO, int* NumColO, char* nomfic){
+void dSMDaSMO(float* secmbrO, int* AdPrCoefLiO, float* MatriceO, int* NumColO, char* nomfich, char* nomfic){
 
 
   /*** Lecture du fichier binaire SMD ***/
