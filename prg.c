@@ -157,7 +157,7 @@ int main(){
   float* MatriceO=(float *) calloc((NbLign1+NbCoef1),sizeof(float));
   int* NumColO=malloc((NbCoef1)*sizeof(int));
 
-  dSMDaSMO(secmbrO, AdPrCoefLiO, MatriceO, NumColO, "SMO_bin.txt");
+  dSMDaSMO(secmbrO, AdPrCoefLiO, MatriceO, NumColO, "SMD_bin.txt", "SMO_bin.txt");
 
 
 
