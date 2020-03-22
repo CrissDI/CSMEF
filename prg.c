@@ -105,14 +105,13 @@ int main(){
   float* secmbr1;
   int* nuddir1;
   float* valdir1;
-  int NbCoef1;
   float *Matrice1;
   int* NumCol1;
   int* AdSuccLi1;
 
   /* Lecture du fichier binaire*/
 
-  LecSMD(&NbLign1, &NbCoef1, &secmbr1, &nuddir1, &valdir1,
+  LecSMD(&NbLign1, &secmbr1, &nuddir1, &valdir1,
 	 &AdPrCoefLi1, &Matrice1, &NumCol1, &AdSuccLi1,"SMD_bin.txt");
 
   /* Affichage de la matrice assemblée (prise en compte CL Dirichlet) */
@@ -152,12 +151,12 @@ int main(){
 
   /***** Construction de la SMO *****/
 
-  float* secmbrO=(float *) calloc(NbLign1, sizeof(float));
-  int* AdPrCoefLiO=(int *) calloc(NbLign1,sizeof(int));
-  float* MatriceO=(float *) calloc((NbLign1+NbCoef1),sizeof(float));
-  int* NumColO=malloc((NbCoef1)*sizeof(int));
+  float* secmbrO;
+  int* AdPrCoefLiO;
+  float* MatriceO;
+  int* NumColO;
 
-  dSMDaSMO(secmbrO, AdPrCoefLiO, MatriceO, NumColO, "SMD_bin.txt", "SMO_bin.txt");
+  dSMDaSMO(&secmbrO, &AdPrCoefLiO,& MatriceO, &NumColO, "SMD_bin.txt", "SMO_bin.txt");
 
 
 

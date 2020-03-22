@@ -21,11 +21,14 @@ void dSMDaSMO(float** secmbrO, int** AdPrCoefLiO, float** MatriceO, int** NumCol
   int* AdSuccLi1;
 
 
-  LecSMD(&NbLign1, &NbCoef1, &secmbr1, &nuddir1, &valdir1,
+  LecSMD(&NbLign1, &secmbr1, &nuddir1, &valdir1,
 	     &AdPrCoefLi1, &Matrice1, &NumCol1, &AdSuccLi1,nomfich);
 
   *secmbrO=(float *) calloc(NbLign1, sizeof(float));
   *AdPrCoefLiO=(int *) calloc(NbLign1,sizeof(int));
+
+   NbCoef1 = (AdPrCoefLi1)[NbLign1-1]-1;    /*********/
+
   *MatriceO=(float *) calloc((NbLign1+NbCoef1),sizeof(float));
   *NumColO=malloc((NbCoef1)*sizeof(int));
 
@@ -49,7 +52,7 @@ void dSMDaSMO(float** secmbrO, int** AdPrCoefLiO, float** MatriceO, int** NumCol
   fwrite( *secmbrO, sizeof(float), NbLign1, smo );
   fwrite( *AdPrCoefLiO, sizeof(int), NbLign1, smo );
 
-  NbCoef1 = (*AdPrCoefLiO)[NbLign1-1]-1;
+  NbCoef1 = (*AdPrCoefLiO)[NbLign1-1]-1;        /*********/
 
   fwrite( *MatriceO, sizeof(float), NbLign1+NbCoef1, smo );
   fwrite( *NumColO, sizeof(int), NbCoef1, smo );
