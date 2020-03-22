@@ -4,7 +4,8 @@
 #include "assmb.h"
 
 
-void dSMDaSMO(float* secmbrO, int* AdPrCoefLiO, float* MatriceO, int* NumColO, char* nomfich, char* nomfic){
+void dSMDaSMO(float** secmbrO, int** AdPrCoefLiO, float** MatriceO, int** NumColO,
+              char* nomfich, char* nomfic){
 
 
   /*** Lecture du fichier binaire SMD ***/
@@ -23,12 +24,17 @@ void dSMDaSMO(float* secmbrO, int* AdPrCoefLiO, float* MatriceO, int* NumColO, c
   LecSMD(&NbLign1, &NbCoef1, &secmbr1, &nuddir1, &valdir1,
 	     &AdPrCoefLi1, &Matrice1, &NumCol1, &AdSuccLi1,nomfich);
 
+  *secmbrO=(float *) calloc(NbLign1, sizeof(float));
+  *AdPrCoefLiO=(int *) calloc(NbLign1,sizeof(int));
+  *MatriceO=(float *) calloc((NbLign1+NbCoef1),sizeof(float));
+  *NumColO=malloc((NbCoef1)*sizeof(int));
+
 
   /*** Passage du stockage SMD a SMO ***/
 
   cdesse_(&NbLign1, AdPrCoefLi1, NumCol1, AdSuccLi1,
           Matrice1, secmbr1, nuddir1, valdir1,
-          AdPrCoefLiO, NumColO, MatriceO, secmbrO);
+          *AdPrCoefLiO, *NumColO, *MatriceO, *secmbrO);
 
 
   /*** Ecriture dans le fichier binaire SMO ***/
@@ -40,15 +46,15 @@ void dSMDaSMO(float* secmbrO, int* AdPrCoefLiO, float* MatriceO, int* NumColO, c
   }
 
   fwrite(&NbLign1, sizeof(int), 1, smo );
-  fwrite( secmbrO, sizeof(float), NbLign1, smo );
-  fwrite( AdPrCoefLiO, sizeof(int), NbLign1, smo );
-  fwrite( MatriceO, sizeof(float), NbLign1+NbCoef1, smo );
-  fwrite( NumColO, sizeof(int), NbCoef1, smo );
+  fwrite( *secmbrO, sizeof(float), NbLign1, smo );
+  fwrite( *AdPrCoefLiO, sizeof(int), NbLign1, smo );
+
+  NbCoef1 = (*AdPrCoefLiO)[NbLign1-1]-1;
+
+  fwrite( *MatriceO, sizeof(float), NbLign1+NbCoef1, smo );
+  fwrite( *NumColO, sizeof(int), NbCoef1, smo );
 
   fclose(smo);
-
-  /* affsmo_(&NbLign1,AdPrCoefLiO,NumColO,MatriceO,secmbrO); */
-
 
   /* Liberation memoire */
 
