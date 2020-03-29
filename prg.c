@@ -119,6 +119,8 @@ int main(){
   affsmd_(&NbLign1,AdPrCoefLi1,NumCol1, AdSuccLi1,Matrice1,secmbr1,nuddir1,valdir1);
 
 
+
+
   /*** Libération mémoire ***/
   free(coorEl);
   freetab(pcoord);
@@ -156,7 +158,7 @@ int main(){
   float* MatriceO;
   int* NumColO;
 
-  dSMDaSMO(&secmbrO, &AdPrCoefLiO,& MatriceO, &NumColO, "SMD_bin.txt", "SMO_bin.txt");
+  dSMDaSMO(&secmbrO, &AdPrCoefLiO, &MatriceO, &NumColO, "SMD_bin.txt", "SMO_bin.txt");
 
 
 
@@ -178,6 +180,73 @@ int main(){
   affsmo_(&NbLignO1,AdPrCoefLiO1,NumColO1,MatriceO1,secmbrO1);
 
 
+  /*** Passage de la SMO au stockage profil ***/
+
+  float* MatProf = (float *)calloc(0.5*NbLign*(NbLign+1),sizeof(float));
+  int* Profil = malloc(NbLignO1*sizeof(int));
+
+  dSMOaPR(NbLignO1, AdPrCoefLiO1,MatriceO1,NumColO1,Profil, MatProf);
+
+/*
+  printf("Coefs Profil:\n");
+  for (int i=0; i<NbLignO1; i++){
+    printf("%d \n", Profil[i]);
+  }
+
+  printf("Coefs MatProf:\n");
+  for (int i=0; i<Profil[NbLignO1-1]+NbLignO1-1; i++){
+    printf("%f \n", MatProf[i]);
+  }
+*/
+
+
+  /*** Calcul de la solution Elements finis ***/
+
+  /* Decomposition de Cholesky */
+
+  float* ad = malloc(NbLignO1*sizeof(float));                        /* diagonale de A */
+  float* ld = malloc(NbLignO1*sizeof(float));
+  float* al = malloc((AdPrCoefLiO1[NbLign1-1]-1)*sizeof(float));     /* partie inferieure stricte de A */
+  float* ll = malloc((AdPrCoefLiO1[NbLign1-1]-1)*sizeof(float));
+  float eps = 1e-2;
+
+  for (int i=0; i<NbLignO1; i++){
+    ad[i] = MatProf[i];
+  }
+  for (int j=0; j<Profil[NbLignO1-1]-1; j++){
+    al[j] = MatProf[NbLignO1+j];
+  }
+
+  ltlpr_(&NbLignO1,Profil,ad,al,&eps,ld,ll);
+/*
+  printf("Coefs ld\n");
+  for (int i=0; i<NbLignO1; i++){
+    printf("%f \n", ld[i]);
+  }
+
+  printf("\nCoefs ld\n");
+  for (int j=0; j<Profil[NbLignO1-1]-1; j++){
+    printf("%f \n", ll[j]);
+  }
+*/
+
+
+
+  /* Resolution du systeme */
+
+  float* smbc=(float *) calloc(NbLignO1, sizeof(float));
+  float* SMB =(float *) calloc(NbLignO1, sizeof(float));
+
+
+  rsprl_(&NbLignO1,Profil,ld,ll,secmbrO1,smbc);
+  rspru_(&NbLignO1,Profil,ld,ll,smbc,SMB);
+
+  printf("\nSolution du systeme\n");
+  for (int j=0; j<NbLignO1; j++){
+    printf("%f \n", SMB[j]);
+  }
+
+
   /*** Liberation memoire ***/
   free(secmbrO);
   free(AdPrCoefLiO);
@@ -189,6 +258,11 @@ int main(){
   free(NumColO1);
   free(secmbrO1);
 
+  free(MatProf);
+  free(Profil);
+
+  free(ad);
+  free(al);
 
 
 }
