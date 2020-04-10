@@ -33,6 +33,7 @@ int main(){
     printf("%f %f \n", pcoord[i][0], pcoord[i][1]);
   }
 
+
   printf("%d %d %d %d \n", nbtel,t,nbneel,nbaret); /* affichate de m p t q */
 
   /* Affichage de pngnel */
@@ -123,7 +124,7 @@ int main(){
 
   /*** Libération mémoire ***/
   free(coorEl);
-  freetab(pcoord);
+  /*freetab(pcoord);*/
   freetab(pnRefAr);
   freetab(pngnel);
 
@@ -204,31 +205,23 @@ int main(){
 
   /* Decomposition de Cholesky */
 
-  float* ad = malloc(NbLignO1*sizeof(float));                        /* diagonale de A */
-  float* ld = malloc(NbLignO1*sizeof(float));
-  float* al = malloc((AdPrCoefLiO1[NbLign1-1]-1)*sizeof(float));     /* partie inferieure stricte de A */
-  float* ll = malloc((AdPrCoefLiO1[NbLign1-1]-1)*sizeof(float));
-  float eps = 1e-2;
+  float nbc = (NbLignO1*(NbLignO1+1))/2;            /* nombre de coefficients sous la diag stricte */
+  float* ld = malloc(NbLignO1*sizeof(float));       /* diagonale de L */
+  float* ll = malloc(nbc*sizeof(float));
+  float eps = 1e-5;
 
-  for (int i=0; i<NbLignO1; i++){
-    ad[i] = MatProf[i];
-  }
-  for (int j=0; j<Profil[NbLignO1-1]-1; j++){
-    al[j] = MatProf[NbLignO1+j];
-  }
+  ltlpr_(&NbLignO1,Profil,MatProf,&MatProf[NbLignO1],&eps,ld,ll);
 
-  ltlpr_(&NbLignO1,Profil,ad,al,&eps,ld,ll);
-/*
-  printf("Coefs ld\n");
+  /*printf("Coefs ld\n");
   for (int i=0; i<NbLignO1; i++){
     printf("%f \n", ld[i]);
   }
 
-  printf("\nCoefs ld\n");
-  for (int j=0; j<Profil[NbLignO1-1]-1; j++){
+  printf("\nCoefs ll\n");
+  for (int j=0; j<nbc; j++){
     printf("%f \n", ll[j]);
-  }
-*/
+  }*/
+
 
 
 
@@ -241,10 +234,25 @@ int main(){
   rsprl_(&NbLignO1,Profil,ld,ll,secmbrO1,smbc);
   rspru_(&NbLignO1,Profil,ld,ll,smbc,SMB);
 
-  printf("\nSolution du systeme\n");
+  /*printf("\nSolution du systeme\n");
   for (int j=0; j<NbLignO1; j++){
     printf("%f \n", SMB[j]);
-  }
+  }*/
+
+
+
+  /*** Calcul de la solution exacte UEX ***/
+
+  float* UEX = (float *) calloc(NbLignO1, sizeof(float));
+  CalSol(NbLignO1,pcoord,UEX);
+
+
+  /*** Affichage de la solution ***/
+  /*affsol_(&NbLignO1,coor,SMB,UEX,"d1t1_2");*/
+
+
+
+
 
 
   /*** Liberation memoire ***/
@@ -261,8 +269,6 @@ int main(){
   free(MatProf);
   free(Profil);
 
-  free(ad);
-  free(al);
-
+  free(UEX);
 
 }

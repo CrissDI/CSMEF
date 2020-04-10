@@ -1,4 +1,8 @@
-void dSMDaSMO(float* secmbrO, int* AdPrCoefLiO, float* MatriceO, int* NumColO, 
+void dSMDaSMO(float** secmbrO, int** AdPrCoefLiO, float** MatriceO, int** NumColO,
               char* nomfich, char* nomfic);
 void LecSMO(int* NbLignO1, int* NbCoefO1, float** secmbrO1, int** AdPrCoefLiO1,
             float** MatriceO1, int** NumColO1, char* nomficO);
+void dSMOaPR(int NbLign, int* AdPrCoefLi, float* Matrice, int* NumCol,
+	         int* Profil, float* MatProf);
+
+void CalSol(int NbLign, float** coord, float* UEX);
